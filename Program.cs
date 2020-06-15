@@ -1,164 +1,152 @@
-﻿using System;
+﻿# define TRACE_ON
+using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.Xml.Serialization;
 
-namespace wsb_lab2
-{
+namespace DelegatyItp {
 
-    public static class TemperatureConverter
-    {
-        public static double CelsiusToFahrenheit(double temperatureCelsius)
-        {
-        return (temperatureCelsius* 9 / 5) + 32;
-        }
-        public static double FahrenheitToCelsius(double temperatureFahrenheit)
-        {
-         return (temperatureFahrenheit - 32) * 5 / 9;
-        }
-    }
     
-
-    class Program
-    {
-
-
-        public struct PointStruct
-        {
-            public int x, y;
-            public PointStruct(int x, int y) { this.x = x; this.y = y; }
+    class Program {
+        static int Squere(int x) {
+            return x * x;
         }
 
-        public class PointClass { public int x, y; }
+        static int Multiply(int x, int y) {
+            return x * y;
+        }
 
-
-
-
-        static void Main(string[] args)
+        [Obsolete(" Legacy implementation , use ... instead ")] // warning
+        [Conditional("TRACE_ON")]
+        public static void Log ( string logMsg )
         {
-            PointStruct str1 = new PointStruct();
-
-            PointStruct str2 = new PointStruct(5, 5);
-
-
-
-            TimeSpan timeSpan = new TimeSpan(1, 12, 30, 30);
-            Console.WriteLine(timeSpan.TotalMinutes);
-            Console.WriteLine(timeSpan.Minutes);
-            Console.WriteLine(TimeSpan.FromHours(100) - timeSpan);
-            Console.WriteLine(TimeSpan.Parse(" 12.12:21:21 "));
-
-
-            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
-            DateTime dateTime = DateTime.Now;
-
-            Console.WriteLine(dateTime.DayOfWeek);
-            Console.WriteLine(dateTime.DayOfYear);
-            Console.WriteLine(dateTime.ToShortTimeString());
-            Console.WriteLine(dateTime.IsDaylightSavingTime());
-            Console.WriteLine(new DateTime(2020, 01, 01, 12, 0, 0).IsDaylightSavingTime());
-
-            Console.WriteLine((DateTime.Now + TimeSpan.FromDays(2)).DayOfWeek);
-
-            DateTime dateTime1 = new DateTime(2020, 1, 1, 12, 0, 0);
-            DateTime dateTime2 = new DateTime(2020, 1, 1, 12, 0, 0);
-
-            Console.WriteLine(dateTime1 == dateTime2);
-
-            DateTime local = DateTime.Now;
-            DateTime utc = DateTime.Now.ToUniversalTime();
-            Console.WriteLine(local == utc); // false
-
-
-            PointStruct pointStructA = new PointStruct(1, 1);
-            PointStruct pointStructB = new PointStruct(1, 1);
-
-
-
-            PointClass pointClassA = new PointClass();
-            PointClass pointClassB = new PointClass();
-
-            pointClassA.x = 1;
-            pointClassA.y = 1;
-
-            pointClassB.x = 1;
-            pointClassB.y = 1;
-
-
-            Console.WriteLine(pointStructA.Equals(pointStructB));
-            // true, bo są tego samego typu i mają te same wartości pól
-            // i się do nich nie odwołujemy przez referencje
-
-            Console.WriteLine(pointClassA.Equals(pointClassB));
-            // false. Chyba dlatego że każdy obiekt ma inną referencje
-            // w sensie, są zapisane w innym miejscu w pamięci,
-            // więc z automatu nie są równe
-
-
-
-
-            PointClass pointClassC = pointClassA;
-            Console.WriteLine(pointClassA.Equals(pointClassC));
-            // teraz odwołują się do tego samego miejsca w pamięci więc true
-
-
-
-            PointChanger(pointClassA);
-            PointChanger(pointStructA);
-
-
-
-            Console.WriteLine(pointStructA.Equals(pointStructB));
-            // dalej jest true ?? czyli chyba jest tworzona osobnia kopia struktury wewnatrz metody
-
-            Console.WriteLine(pointClassA.Equals(pointClassB));
-            // false
-
-
-
-            PointClass pointClassD = pointClassA;
-            Console.WriteLine(pointClassA.Equals(pointClassD));
-            // true
-
-
-            Sentence s = new Sentence();
-            Console.WriteLine(s[1]); // DEF
-            s[1] = " XYZ ";
-            Console.WriteLine(s[1]); // XYZ
-
-
-            Console.WriteLine(Employee2.employeeCounter);
-            Employee2 employee1 = new Employee2();
-            Employee2 employee2 = new Employee2();
-            Console.WriteLine(Employee2.employeeCounter);
-
-
-
-
-
-
-
-
-
-
-
-
-
-            Console.ReadKey();
-
-
+            Console . WriteLine ( logMsg );
         }
 
 
-        public static void PointChanger(PointClass point)
-        {
-            point.x = 100;
+        
+
+        static void Main(string[] args) {
+
+            Dog piesek1 = new Dog("Puszek", "pudel");
+
+            piesek1.Height = 12;
+            piesek1.Name = "Puszor";
+
+            piesek1.ShowInfo();
+            piesek1.WagItsTail();
+
+
+            Animal myAnimal = new Dog("Azor", "pudel");
+            myAnimal.Name = "Azorek";
+
+            //Dog myDog = new Animal();
+
+            Dog myDog = new Dog("Wika", "bulldog");
+            Animal a = myDog ; // rzutowanie w gore
+
+            //Console . WriteLine (a.Name );
+            //a.WagItsTail (); // blad kompilacji
+
+            //Dog d = (Dog)a;
+            //a.WagItsTail(); // wywolanie metody sie uda
+
+            //Animal puszek2 = new Animal("Puszek"); // niemozna
+
+            myAnimal.SetItsAge(12);
+
+            Snake snejk1 = new Snake(3, "Bidon");
+
+            //snejk1.showInfo();
+            snejk1.Cry();
+
+            Cobra koberka = new Cobra(3, "KOBERKA");
+            //koberka.Cry(); nie dziala bo snejk:sealed
+
+
+            IPrintable printer = new Printer();
+            ICopiable copier = new Photocopier();
+
+
+
+            var pcbBomA = new PcbBom(printer);
+            //var pcbBomB = new PcbBom(copier);
+
+            pcbBomA.Print();
+            //pcbBomB.Print();
+
+
+
+            
+            ExampleTransformer transformer = new ExampleTransformer();
+            transformer.TransformationCompleted += () => Console.WriteLine("ZROBIONE");
+            transformer.Transform(Squere, 2);
+            transformer.Transform(Multiply, 3, 2);
+            transformer.Transform((x) => { return x * x * x * x; }, 2);
+            transformer.Transform((x, y) => { return x / y; }, 2, 0);
+            
+
+            List<string> lst = new List<string>();
+
+            lst.Add("Ross Gellar");
+            lst.Add("Chandler Bing");
+            lst.Add("Joey Tribbiani");
+            lst.Add("Monika Geller");
+
+            var gellers = lst.Where(x => x.Contains("Gellar")).ToList();
+
+            Type type = typeof(Configuration);
+
+            MethodInfo[] methodInfos = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            Console.WriteLine(" The methods of the Configuration class are : ");
+
+            foreach (var temp in methodInfos) {
+                Console.WriteLine(temp.Name);
+            }
+
+            PropertyInfo[] propertiesInfos = type.GetProperties();
+
+            foreach (var temp in propertiesInfos) {
+                Console.WriteLine(temp.Name);
+            }
+
+            Console.WriteLine("Specify, full class name");
+
+            string className = Console.ReadLine();
+
+            object ret = Activator.CreateInstance(Type.GetType(className));
+            Console.WriteLine(ret.GetType().FullName);
+
+            PropertyInfo propertyInfo = ret.GetType().GetProperty("MaxUsersCount");
+            //propertyInfo.SetValue(ret ,12345);
+            //Console.WriteLine(" MaxUsersCount value has been set to: " + ( ret as Configuration ). MaxUsersCount); 
+            // before one has to cast to configuration (?. skip if null )
+
+
+            Log("COS"); // z TRACE_ON metoda jest wywolywania, bez nie
+            
+
+
+            var customAttributes = typeof ( Configuration ). GetCustomAttributes ();
+            foreach ( var attribute in customAttributes )
+            {
+                Console.WriteLine((attribute as CustomAttribute )?.Author);
+                Console.WriteLine((attribute as CustomAttribute )? Description);
+            }
+
+            Configuration config = new Configuration();
+
+            config.MaxUserCount = 10;
+            config.MaxUserPasswordLength = 15;
+            config.MinUserPasswordLength = 8;
+
+            Configuration.Save(config , "Config.xml");
+            Console.ReadLine();
         }
 
-        public static void PointChanger(PointStruct point)
-        {
-            point.x = 100;
-        }
+
     }
 }
